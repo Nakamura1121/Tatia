@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowing Flowers Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #ffc0e0 0%, #ff99d4 50%, #ffb3e6 100%);
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .flower-bed {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(to top, rgba(255, 182, 193, 0.4), transparent);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 20px;
+            gap: 5px;
+            border-top: 3px solid rgba(255, 192, 224, 0.5);
+        }
+
+        .title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            text-align: center;
+            color: white;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            font-size: 48px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            animation: fadeInOut 8s ease-in-out infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .flower {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            font-size: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+        }
+
+        /* Flower petals */
+        .flower::before {
+            content: '🌸';
+            position: absolute;
+        }
+
+        /* Animation for flowing from left to right */
+        @keyframes flowRight {
+            0% {
+                left: -50px;
+                top: 50%;
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                left: 100vw;
+                top: 50%;
+                opacity: 0;
+            }
+        }
+
+        /* Animation for falling from top */
+        @keyframes fallDown {
+            0% {
+                top: -50px;
+                left: var(--start-x, 50%);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            100% {
+                top: calc(100vh - 150px);
+                left: var(--start-x, 50%);
+                opacity: 1;
+            }
+        }
+
+        /* Animation for gentle swaying side to side while falling */
+        @keyframes swayFall {
+            0% {
+                top: -50px;
+                left: var(--start-x, 50%);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            50% {
+                left: calc(var(--start-x, 50%) + 30px);
+            }
+            100% {
+                top: calc(100vh - 150px);
+                left: var(--start-x, 50%);
+                opacity: 1;
+            }
+        }
+
+        .flower.flow-right {
+            animation: flowRight linear infinite;
+        }
+
+        .flower.fall-down {
+            animation: fallDown ease-in 1 forwards;
+        }
+
+        .flower.sway-fall {
+            animation: swayFall ease-in 1 forwards;
+        }
+
+        /* Different flower types */
+        .flower.type-1::before { content: '🌸'; }
+        .flower.type-2::before { content: '🌼'; }
+        .flower.type-3::before { content: '🌺'; }
+        .flower.type-4::before { content: '🌻'; }
+        .flower.type-5::before { content: '🌷'; }
+        .flower.type-6::before { content: '💐'; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">✨ Blooming Dreams ✨</div>
+        <div class="flower-bed" id="flowerBed"></div>
+    </div>
+
+    <script>
+        const container = document.querySelector('.container');
+        const flowerBed = document.querySelector('#flowerBed');
+        const flowerTypes = ['type-1', 'type-2', 'type-3', 'type-4', 'type-5', 'type-6'];
+        const animationTypes = ['fall-down', 'sway-fall'];
+
+        function createFlower() {
+            const flower = document.createElement('div');
+            flower.classList.add('flower');
+            
+            // Random flower type
+            const flowerType = flowerTypes[Math.floor(Math.random() * flowerTypes.length)];
+            flower.classList.add(flowerType);
+            
+            // Random animation type
+            const animationType = animationTypes[Math.floor(Math.random() * animationTypes.length)];
+            flower.classList.add(animationType);
+            
+            // Random size (scale)
+            const scale = 0.6 + Math.random() * 1;
+            flower.style.fontSize = (30 * scale) + 'px';
+            
+            // Random starting x position
+            flower.style.setProperty('--start-x', Math.random() * 100 + '%');
+            
+            // Duration for falling
+            const duration = 4 + Math.random() * 3;
+            flower.style.animationDuration = duration + 's';
+            
+            container.appendChild(flower);
+            
+            // Move flower to flower-bed after animation completes
+            setTimeout(() => {
+                flower.style.position = 'relative';
+                flower.style.animation = 'none';
+                flower.style.top = 'auto';
+                flower.style.left = 'auto';
+                flowerBed.appendChild(flower);
+            }, duration * 1000);
+        }
+
+        // Create flowers at faster intervals for more flowers
+        setInterval(createFlower, 300);
+
+        // Create some initial flowers
+        for (let i = 0; i < 8; i++) {
+            setTimeout(createFlower, i * 150);
+        }
+    </script>
+</body>
+</html>
