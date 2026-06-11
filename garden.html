@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tatia's Flower Garden</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #ffc0e0 0%, #ff99d4 50%, #ffb3e6 100%);
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .flower-bed {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(to top, rgba(255, 182, 193, 0.5), transparent);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 20px;
+            gap: 5px;
+            border-top: 3px solid rgba(255, 192, 224, 0.5);
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.9);
+            color: #ff1493;
+            border: 2px solid #ff1493;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-btn:hover {
+            background: #ff1493;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .back-btn:active {
+            transform: scale(0.98);
+        }
+
+        .title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            text-align: center;
+            color: white;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            font-size: 56px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            animation: fadeInOut 8s ease-in-out infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .flower-heart {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            font-size: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+        }
+
+        /* Flower and heart petals */
+        .flower-heart::before {
+            content: '🌸';
+            position: absolute;
+        }
+
+        /* Animation for falling from top */
+        @keyframes fallDown {
+            0% {
+                top: -50px;
+                left: var(--start-x, 50%);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            100% {
+                top: calc(100vh - 200px);
+                left: var(--start-x, 50%);
+                opacity: 1;
+            }
+        }
+
+        /* Animation for gentle swaying side to side while falling */
+        @keyframes swayFall {
+            0% {
+                top: -50px;
+                left: var(--start-x, 50%);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            50% {
+                left: calc(var(--start-x, 50%) + 30px);
+            }
+            100% {
+                top: calc(100vh - 200px);
+                left: var(--start-x, 50%);
+                opacity: 1;
+            }
+        }
+
+        /* Animation for spinning fall */
+        @keyframes spinFall {
+            0% {
+                top: -50px;
+                left: var(--start-x, 50%);
+                opacity: 0;
+                transform: rotate(0deg);
+            }
+            10% {
+                opacity: 1;
+            }
+            100% {
+                top: calc(100vh - 200px);
+                left: var(--start-x, 50%);
+                opacity: 1;
+                transform: rotate(360deg);
+            }
+        }
+
+        .flower-heart.fall-down {
+            animation: fallDown ease-in 1 forwards;
+        }
+
+        .flower-heart.sway-fall {
+            animation: swayFall ease-in 1 forwards;
+        }
+
+        .flower-heart.spin-fall {
+            animation: spinFall ease-in 1 forwards;
+        }
+
+        /* Different flower and heart types */
+        .flower-heart.type-1::before { content: '🌸'; }
+        .flower-heart.type-2::before { content: '🌼'; }
+        .flower-heart.type-3::before { content: '🌺'; }
+        .flower-heart.type-4::before { content: '🌻'; }
+        .flower-heart.type-5::before { content: '🌷'; }
+        .flower-heart.type-6::before { content: '💐'; }
+        .flower-heart.type-7::before { content: '💕'; }
+        .flower-heart.type-8::before { content: '❤️'; }
+        .flower-heart.type-9::before { content: '💖'; }
+        .flower-heart.type-10::before { content: '💗'; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-btn" onclick="window.history.back()">← Back</button>
+        <div class="title">✨ Tatia's Garden ✨</div>
+        <div class="flower-bed" id="flowerBed"></div>
+    </div>
+
+    <script>
+        const container = document.querySelector('.container');
+        const flowerBed = document.querySelector('#flowerBed');
+        const flowerHeartTypes = ['type-1', 'type-2', 'type-3', 'type-4', 'type-5', 'type-6', 'type-7', 'type-8', 'type-9', 'type-10'];
+        const animationTypes = ['fall-down', 'sway-fall', 'spin-fall'];
+
+        function createFlowerHeart() {
+            const flowerHeart = document.createElement('div');
+            flowerHeart.classList.add('flower-heart');
+            
+            // Random flower/heart type
+            const flowerHeartType = flowerHeartTypes[Math.floor(Math.random() * flowerHeartTypes.length)];
+            flowerHeart.classList.add(flowerHeartType);
+            
+            // Random animation type
+            const animationType = animationTypes[Math.floor(Math.random() * animationTypes.length)];
+            flowerHeart.classList.add(animationType);
+            
+            // Random size (scale)
+            const scale = 0.5 + Math.random() * 1.2;
+            flowerHeart.style.fontSize = (30 * scale) + 'px';
+            
+            // Random starting x position
+            flowerHeart.style.setProperty('--start-x', Math.random() * 100 + '%');
+            
+            // Duration for falling
+            const duration = 3 + Math.random() * 3.5;
+            flowerHeart.style.animationDuration = duration + 's';
+            
+            container.appendChild(flowerHeart);
+            
+            // Move flower/heart to flower-bed after animation completes
+            setTimeout(() => {
+                flowerHeart.style.position = 'relative';
+                flowerHeart.style.animation = 'none';
+                flowerHeart.style.top = 'auto';
+                flowerHeart.style.left = 'auto';
+                flowerBed.appendChild(flowerHeart);
+            }, duration * 1000);
+        }
+
+        // Create flowers and hearts at very fast intervals for MANY falling items
+        setInterval(createFlowerHeart, 200);
+
+        // Create more initial flowers/hearts
+        for (let i = 0; i < 12; i++) {
+            setTimeout(createFlowerHeart, i * 100);
+        }
+    </script>
+</body>
+</html>
